@@ -9,3 +9,7 @@ testacc:
 .PHONY: test
 test:
 	go test ./... -v $(TESTARGS)
+
+.PHONY: generate
+generate:
+	go generate ./...
