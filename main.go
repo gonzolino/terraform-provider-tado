@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/gonzolino/terraform-provider-tado/internal/provider"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -34,13 +34,12 @@ func main() {
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	opts := tfsdk.ServeOpts{
-		Debug: debug,
-
-		Name: "registry.terraform.io/gonzolino/tado",
+	opts := providerserver.ServeOpts{
+		Address: "registry.terraform.io/gonzolino/tado",
+		Debug:   debug,
 	}
 
-	err := tfsdk.Serve(context.Background(), provider.New(version), opts)
+	err := providerserver.Serve(context.Background(), provider.New(version), opts)
 
 	if err != nil {
 		log.Fatal(err.Error())
