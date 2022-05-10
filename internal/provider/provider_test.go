@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -19,4 +20,10 @@ func testAccPreCheck(t *testing.T) {
 	// You can add code here to run prior to any test case execution, for example assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
+	if _, ok := os.LookupEnv("TADO_USERNAME"); !ok {
+		t.Fatal("TADO_USERNAME must be set for acceptance tests")
+	}
+	if _, ok := os.LookupEnv("TADO_PASSWORD"); !ok {
+		t.Fatal("TADO_PASSWORD must be set for acceptance tests")
+	}
 }
