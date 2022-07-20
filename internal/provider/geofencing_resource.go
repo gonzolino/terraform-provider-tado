@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
@@ -235,5 +235,5 @@ func (geofencingResource) Delete(ctx context.Context, req tfsdk.DeleteResourceRe
 }
 
 func (geofencingResource) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("home_name"), req, resp)
+	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("home_name"), req, resp)
 }
