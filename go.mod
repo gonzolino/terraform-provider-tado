@@ -1,6 +1,6 @@
 module github.com/gonzolino/terraform-provider-tado
 
-go 1.17
+go 1.18
 
 require (
 	github.com/gonzolino/gotado/v2 v2.0.1
