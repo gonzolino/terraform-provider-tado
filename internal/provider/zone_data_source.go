@@ -4,14 +4,16 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
-var _ tfsdk.DataSourceType = zoneDataSourceType{}
-var _ tfsdk.DataSource = zoneDataSource{}
+var _ provider.DataSourceType = zoneDataSourceType{}
+var _ datasource.DataSource = zoneDataSource{}
 
 type zoneDataSourceType struct{}
 
@@ -60,7 +62,7 @@ func (zoneDataSourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 	}, nil
 }
 
-func (zoneDataSourceType) NewDataSource(_ context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (zoneDataSourceType) NewDataSource(_ context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return zoneDataSource{
@@ -79,10 +81,10 @@ type zoneDataSourceData struct {
 }
 
 type zoneDataSource struct {
-	provider provider
+	provider tadoProvider
 }
 
-func (d zoneDataSource) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d zoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data zoneDataSourceData
 
 	diags := req.Config.Get(ctx, &data)
