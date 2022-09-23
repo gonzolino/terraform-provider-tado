@@ -5,22 +5,39 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gonzolino/gotado/v2"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
-var _ provider.ResourceType = geofencingResourceType{}
-var _ resource.Resource = geofencingResource{}
-var _ resource.ResourceWithImportState = geofencingResource{}
+var _ resource.Resource = &GeofencingResource{}
+var _ resource.ResourceWithImportState = &GeofencingResource{}
 
-type geofencingResourceType struct{}
+func NewGeofencingResource() resource.Resource {
+	return &GeofencingResource{}
+}
 
-func (geofencingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
+type GeofencingResource struct {
+	client   *gotado.Tado
+	username string
+	password string
+}
+
+type GeofencingResourceModel struct {
+	ID       types.String `tfsdk:"id"`
+	HomeName types.String `tfsdk:"home_name"`
+	Presence types.String `tfsdk:"presence"`
+}
+
+func (r *GeofencingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_geofencing"
+}
+
+func (r GeofencingResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Controls geofencing of a home.",
@@ -45,26 +62,30 @@ func (geofencingResourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.D
 	}, nil
 }
 
-func (geofencingResourceType) NewResource(_ context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (r *GeofencingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	// Prevent panic if the provider has not been configured.
+	if req.ProviderData == nil {
+		return
+	}
 
-	return geofencingResource{
-		provider: provider,
-	}, diags
+	data, ok := req.ProviderData.(*tadoProviderData)
+
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *tadoProviderData, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	r.client = data.client
+	r.username = data.username
+	r.password = data.password
 }
 
-type geofencingResourceData struct {
-	ID       types.String `tfsdk:"id"`
-	HomeName types.String `tfsdk:"home_name"`
-	Presence types.String `tfsdk:"presence"`
-}
-
-type geofencingResource struct {
-	provider tadoProvider
-}
-
-func (r geofencingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data geofencingResourceData
+func (r GeofencingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data GeofencingResourceModel
 
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -73,7 +94,7 @@ func (r geofencingResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	me, err := r.provider.client.Me(ctx, r.provider.username, r.provider.password)
+	me, err := r.client.Me(ctx, r.username, r.password)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -122,8 +143,8 @@ func (r geofencingResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r geofencingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data geofencingResourceData
+func (r GeofencingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data GeofencingResourceModel
 
 	diags := req.State.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -132,7 +153,7 @@ func (r geofencingResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	me, err := r.provider.client.Me(ctx, r.provider.username, r.provider.password)
+	me, err := r.client.Me(ctx, r.username, r.password)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -164,8 +185,8 @@ func (r geofencingResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r geofencingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data geofencingResourceData
+func (r GeofencingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data GeofencingResourceModel
 
 	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -174,7 +195,7 @@ func (r geofencingResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	me, err := r.provider.client.Me(ctx, r.provider.username, r.provider.password)
+	me, err := r.client.Me(ctx, r.username, r.password)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -223,8 +244,8 @@ func (r geofencingResource) Update(ctx context.Context, req resource.UpdateReque
 	resp.Diagnostics.Append(diags...)
 }
 
-func (geofencingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data geofencingResourceData
+func (GeofencingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data GeofencingResourceModel
 
 	diags := req.State.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -236,6 +257,6 @@ func (geofencingResource) Delete(ctx context.Context, req resource.DeleteRequest
 	// No deletion necesary on tado api.
 }
 
-func (geofencingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (GeofencingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("home_name"), req, resp)
 }
