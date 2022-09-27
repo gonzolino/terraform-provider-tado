@@ -4,20 +4,48 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gonzolino/gotado/v2"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
-var _ provider.DataSourceType = homeDataSourceType{}
-var _ datasource.DataSource = homeDataSource{}
+var _ datasource.DataSource = &HomeDataSource{}
 
-type homeDataSourceType struct{}
+func NewHomeDataSource() datasource.DataSource {
+	return &HomeDataSource{}
+}
 
-func (homeDataSourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
+type HomeDataSource struct {
+	client   *gotado.Tado
+	username string
+	password string
+}
+
+type HomeDataSourceModel struct {
+	ID              types.Int64   `tfsdk:"id"`
+	Name            types.String  `tfsdk:"name"`
+	TemperatureUnit types.String  `tfsdk:"temperature_unit"`
+	ContactName     types.String  `tfsdk:"contact_name"`
+	ContactEmail    types.String  `tfsdk:"contact_email"`
+	ContactPhone    types.String  `tfsdk:"contact_phone"`
+	AddressLine1    types.String  `tfsdk:"address_line1"`
+	AddressLine2    types.String  `tfsdk:"address_line2"`
+	AddressZipcode  types.String  `tfsdk:"address_zipcode"`
+	AddressCity     types.String  `tfsdk:"address_city"`
+	AddressState    types.String  `tfsdk:"address_state"`
+	AddressCountry  types.String  `tfsdk:"address_country"`
+	GeolocationLat  types.Float64 `tfsdk:"geolocation_lat"`
+	GeolocationLong types.Float64 `tfsdk:"geolocation_long"`
+}
+
+func (*HomeDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_home"
+}
+
+func (HomeDataSource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "A tado home holds all tado devices and heating zones. The home data source provides information such as contact details, address, etc.",
@@ -97,37 +125,30 @@ func (homeDataSourceType) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 	}, nil
 }
 
-func (homeDataSourceType) NewDataSource(_ context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *HomeDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	// Prevent panic if the provider has not been configured.
+	if req.ProviderData == nil {
+		return
+	}
 
-	return homeDataSource{
-		provider: provider,
-	}, diags
+	data, ok := req.ProviderData.(*tadoProviderData)
+
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Data Source Configure Type",
+			fmt.Sprintf("Expected *tadoProviderData, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	d.client = data.client
+	d.username = data.username
+	d.password = data.password
 }
 
-type homeDataSourceData struct {
-	ID              types.Int64   `tfsdk:"id"`
-	Name            types.String  `tfsdk:"name"`
-	TemperatureUnit types.String  `tfsdk:"temperature_unit"`
-	ContactName     types.String  `tfsdk:"contact_name"`
-	ContactEmail    types.String  `tfsdk:"contact_email"`
-	ContactPhone    types.String  `tfsdk:"contact_phone"`
-	AddressLine1    types.String  `tfsdk:"address_line1"`
-	AddressLine2    types.String  `tfsdk:"address_line2"`
-	AddressZipcode  types.String  `tfsdk:"address_zipcode"`
-	AddressCity     types.String  `tfsdk:"address_city"`
-	AddressState    types.String  `tfsdk:"address_state"`
-	AddressCountry  types.String  `tfsdk:"address_country"`
-	GeolocationLat  types.Float64 `tfsdk:"geolocation_lat"`
-	GeolocationLong types.Float64 `tfsdk:"geolocation_long"`
-}
-
-type homeDataSource struct {
-	provider tadoProvider
-}
-
-func (d homeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data homeDataSourceData
+func (d HomeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data HomeDataSourceModel
 
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -136,7 +157,7 @@ func (d homeDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	me, err := d.provider.client.Me(ctx, d.provider.username, d.provider.password)
+	me, err := d.client.Me(ctx, d.username, d.password)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado Authentication Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
