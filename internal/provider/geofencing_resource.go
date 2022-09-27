@@ -33,11 +33,11 @@ type GeofencingResourceModel struct {
 	Presence types.String `tfsdk:"presence"`
 }
 
-func (r *GeofencingResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (*GeofencingResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_geofencing"
 }
 
-func (r GeofencingResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (GeofencingResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Controls geofencing of a home.",
@@ -62,7 +62,7 @@ func (r GeofencingResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Dia
 	}, nil
 }
 
-func (r *GeofencingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *GeofencingResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return

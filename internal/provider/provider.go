@@ -45,12 +45,12 @@ type tadoProviderData struct {
 	password string
 }
 
-func (p *TadoProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "tado"
 	resp.Version = p.version
 }
 
-func (p *TadoProvider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (*TadoProvider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"username": {
@@ -68,7 +68,7 @@ func (p *TadoProvider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnost
 	}, nil
 }
 
-func (p *TadoProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var data TadoProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -113,13 +113,13 @@ func (p *TadoProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 	resp.ResourceData = providerData
 }
 
-func (p *TadoProvider) Resources(_ context.Context) []func() resource.Resource {
+func (*TadoProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewGeofencingResource,
 	}
 }
 
-func (p *TadoProvider) DataSources(_ context.Context) []func() datasource.DataSource {
+func (*TadoProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewHomeDataSource,
 		NewZoneDataSource,
