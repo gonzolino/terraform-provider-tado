@@ -163,7 +163,7 @@ func (d HomeDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	home, err := me.GetHome(ctx, data.Name.Value)
+	home, err := me.GetHome(ctx, data.Name.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Tado Authentication Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return

@@ -78,26 +78,26 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 	}
 
 	var username string
-	if data.Username.Unknown {
+	if data.Username.IsUnknown() {
 		resp.Diagnostics.AddWarning("Tado username is not set", "Tado username is not set. This is required for authentication.")
 	}
-	if data.Username.Null {
+	if data.Username.IsNull() {
 		username = os.Getenv("TADO_USERNAME")
 	} else {
-		username = data.Username.Value
+		username = data.Username.ValueString()
 	}
 	if username == "" {
 		resp.Diagnostics.AddError("Tado username is not set", "Tado username is not set. This is required for authentication.")
 	}
 
 	var password string
-	if data.Password.Unknown {
+	if data.Password.IsUnknown() {
 		resp.Diagnostics.AddWarning("Tado password is not set", "Tado password is not set. This is required for authentication.")
 	}
-	if data.Password.Null {
+	if data.Password.IsNull() {
 		password = os.Getenv("TADO_PASSWORD")
 	} else {
-		password = data.Password.Value
+		password = data.Password.ValueString()
 	}
 	if password == "" {
 		resp.Diagnostics.AddError("Tado password is not set", "Tado password is not set. This is required for authentication.")

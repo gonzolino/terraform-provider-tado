@@ -121,15 +121,17 @@ func (d ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	home, err := me.GetHome(ctx, data.Home.Value)
+	homeName := data.Home.ValueString()
+	home, err := me.GetHome(ctx, homeName)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", data.Home.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", homeName, err))
 		return
 	}
 
-	zone, err := home.GetZone(ctx, data.Name.Value)
+	zoneName := data.Name.ValueString()
+	zone, err := home.GetZone(ctx, zoneName)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get zone '%s': %v", data.Name.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get zone '%s': %v", zoneName, err))
 		return
 	}
 
