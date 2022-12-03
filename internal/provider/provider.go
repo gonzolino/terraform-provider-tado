@@ -116,6 +116,7 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 func (*TadoProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewGeofencingResource,
+		NewHeatingScheduleResource,
 	}
 }
 
