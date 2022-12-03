@@ -83,7 +83,7 @@ func (*HeatingScheduleResource) Metadata(_ context.Context, req resource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_heating_schedule"
 }
 
-func (HeatingScheduleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (HeatingScheduleResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "The heating schedule of a zone.",
@@ -323,7 +323,7 @@ func (r HeatingScheduleResource) Update(ctx context.Context, req resource.Update
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r HeatingScheduleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (HeatingScheduleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data HeatingScheduleResourceModel
 
 	diags := req.State.Get(ctx, &data)
@@ -336,7 +336,7 @@ func (r HeatingScheduleResource) Delete(ctx context.Context, req resource.Delete
 	// A schedule can't be deleted, so we simply 'forget' it
 }
 
-func (r HeatingScheduleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (HeatingScheduleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	splittedID := strings.Split(req.ID, "/")
 	if len(splittedID) != 2 {
 		resp.Diagnostics.AddError("Resource Import ID invalid", fmt.Sprintf("ID '%s' should be in format 'home_name/zone_name'", req.ID))
@@ -588,7 +588,7 @@ func sortTimeBlocksByDayType(blocks []*gotado.ScheduleTimeBlock) map[gotado.DayT
 	return sortedBlocks
 }
 
-func timeBlockObjectToTimeBlockModel(ctx context.Context, block *gotado.ScheduleTimeBlock, model *TimeBlockModel) {
+func timeBlockObjectToTimeBlockModel(_ context.Context, block *gotado.ScheduleTimeBlock, model *TimeBlockModel) {
 	model.Heating = types.Bool{Value: block.Setting.Power == "ON"}
 	if block.Setting.Temperature != nil {
 		model.Temperature = types.Float64{Value: block.Setting.Temperature.Celsius}
