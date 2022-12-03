@@ -141,13 +141,13 @@ func (d ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	data.ID = types.Int64{Value: int64(zone.ID)}
-	data.Name = types.String{Value: zone.Name}
-	data.Home = types.String{Value: home.Name}
-	data.Type = types.String{Value: string(zone.Type)}
-	data.EarlyStart = types.Bool{Value: earlyStart}
-	data.DazzleModeEnabled = types.Bool{Value: zone.DazzleMode.Enabled}
-	data.OpenWindowDetectionEnabled = types.Bool{Value: zone.OpenWindowDetection.Enabled}
+	data.ID = types.Int64Value(int64(zone.ID))
+	data.Name = types.StringValue(zone.Name)
+	data.Home = types.StringValue(home.Name)
+	data.Type = types.StringValue(string(zone.Type))
+	data.EarlyStart = types.BoolValue(earlyStart)
+	data.DazzleModeEnabled = types.BoolValue(zone.DazzleMode.Enabled)
+	data.OpenWindowDetectionEnabled = types.BoolValue(zone.OpenWindowDetection.Enabled)
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)

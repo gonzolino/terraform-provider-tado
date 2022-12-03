@@ -137,9 +137,9 @@ func (r GeofencingResource) Create(ctx context.Context, req resource.CreateReque
 		presence = "auto"
 	}
 
-	data.ID = types.String{Value: home.Name}
-	data.HomeName = types.String{Value: home.Name}
-	data.Presence = types.String{Value: presence}
+	data.ID = types.StringValue(home.Name)
+	data.HomeName = types.StringValue(home.Name)
+	data.Presence = types.StringValue(presence)
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -180,9 +180,9 @@ func (r GeofencingResource) Read(ctx context.Context, req resource.ReadRequest, 
 		presence = "auto"
 	}
 
-	data.ID = types.String{Value: home.Name}
-	data.HomeName = types.String{Value: home.Name}
-	data.Presence = types.String{Value: presence}
+	data.ID = types.StringValue(home.Name)
+	data.HomeName = types.StringValue(home.Name)
+	data.Presence = types.StringValue(presence)
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -241,9 +241,9 @@ func (r GeofencingResource) Update(ctx context.Context, req resource.UpdateReque
 		presence = "auto"
 	}
 
-	data.ID = types.String{Value: home.Name}
-	data.HomeName = types.String{Value: home.Name}
-	data.Presence = types.String{Value: presence}
+	data.ID = types.StringValue(home.Name)
+	data.HomeName = types.StringValue(home.Name)
+	data.Presence = types.StringValue(presence)
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)

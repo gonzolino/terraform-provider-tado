@@ -365,9 +365,9 @@ func isMonTueWedThuFriSatSunSchedule(data HeatingScheduleResourceModel) bool {
 
 func heatingScheduleToResourceData(ctx context.Context, schedule *gotado.HeatingSchedule, data *HeatingScheduleResourceModel) {
 	homeName, zoneName := data.HomeName.ValueString(), data.ZoneName.ValueString()
-	data.ID = types.String{Value: fmt.Sprintf("%s/%s", homeName, zoneName)}
-	data.HomeName = types.String{Value: homeName}
-	data.ZoneName = types.String{Value: zoneName}
+	data.ID = types.StringValue(fmt.Sprintf("%s/%s", homeName, zoneName))
+	data.HomeName = types.StringValue(homeName)
+	data.ZoneName = types.StringValue(zoneName)
 
 	sortedBlocks := sortTimeBlocksByDayType(schedule.Blocks)
 
@@ -589,11 +589,11 @@ func sortTimeBlocksByDayType(blocks []*gotado.ScheduleTimeBlock) map[gotado.DayT
 }
 
 func timeBlockObjectToTimeBlockModel(_ context.Context, block *gotado.ScheduleTimeBlock, model *TimeBlockModel) {
-	model.Heating = types.Bool{Value: block.Setting.Power == "ON"}
+	model.Heating = types.BoolValue(block.Setting.Power == "ON")
 	if block.Setting.Temperature != nil {
-		model.Temperature = types.Float64{Value: block.Setting.Temperature.Celsius}
+		model.Temperature = types.Float64Value(block.Setting.Temperature.Celsius)
 	}
-	model.Start = types.String{Value: block.Start}
-	model.End = types.String{Value: block.End}
-	model.GeofencingControl = types.Bool{Value: !block.GeolocationOverride}
+	model.Start = types.StringValue(block.Start)
+	model.End = types.StringValue(block.End)
+	model.GeofencingControl = types.BoolValue(!block.GeolocationOverride)
 }

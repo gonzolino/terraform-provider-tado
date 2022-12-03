@@ -169,9 +169,9 @@ func (d HomeDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	data.ID = types.Int64{Value: int64(home.ID)}
-	data.Name = types.String{Value: home.Name}
-	data.TemperatureUnit = types.String{Value: string(home.TemperatureUnit)}
+	data.ID = types.Int64Value(int64(home.ID))
+	data.Name = types.StringValue(home.Name)
+	data.TemperatureUnit = types.StringValue(string(home.TemperatureUnit))
 	data.ContactName = toTypesString(home.ContactDetails.Name)
 	data.ContactEmail = toTypesString(home.ContactDetails.Email)
 	data.ContactPhone = toTypesString(home.ContactDetails.Phone)
@@ -181,8 +181,8 @@ func (d HomeDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 	data.AddressCity = toTypesString(home.Address.City)
 	data.AddressState = toTypesString(home.Address.State)
 	data.AddressCountry = toTypesString(home.Address.Country)
-	data.GeolocationLat = types.Float64{Value: home.Geolocation.Latitude}
-	data.GeolocationLong = types.Float64{Value: home.Geolocation.Longitude}
+	data.GeolocationLat = types.Float64Value(home.Geolocation.Latitude)
+	data.GeolocationLong = types.Float64Value(home.Geolocation.Longitude)
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
