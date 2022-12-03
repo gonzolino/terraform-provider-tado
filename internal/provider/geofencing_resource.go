@@ -100,13 +100,15 @@ func (r GeofencingResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	home, err := me.GetHome(ctx, data.HomeName.Value)
+	homeName := data.HomeName.ValueString()
+	home, err := me.GetHome(ctx, homeName)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", data.HomeName.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", homeName, err))
 		return
 	}
 
-	switch data.Presence.Value {
+	presence := data.Presence.ValueString()
+	switch presence {
 	case "auto":
 		err = home.SetPresenceAuto(ctx)
 	case "home":
@@ -114,22 +116,22 @@ func (r GeofencingResource) Create(ctx context.Context, req resource.CreateReque
 	case "away":
 		err = home.SetPresenceAway(ctx)
 	default:
-		resp.Diagnostics.AddError("Invalid Presence", fmt.Sprintf("Invalid presence value '%s', must be one of 'auto', 'home' or 'away'.", data.Presence.Value))
+		resp.Diagnostics.AddError("Invalid Presence", fmt.Sprintf("Invalid presence value '%s', must be one of 'auto', 'home' or 'away'.", presence))
 		return
 	}
 
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to set presence to '%s': %v", data.Presence.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to set presence to '%s': %v", presence, err))
 		return
 	}
 
 	homeState, err := home.GetState(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get state of home '%s': %v", data.HomeName.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get state of home '%s': %v", homeName, err))
 		return
 	}
 
-	presence := strings.ToLower(string(homeState.Presence))
+	presence = strings.ToLower(string(homeState.Presence))
 	// If presence is not locked, it is set to 'auto'.
 	if !homeState.PresenceLocked {
 		presence = "auto"
@@ -159,15 +161,16 @@ func (r GeofencingResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	home, err := me.GetHome(ctx, data.HomeName.Value)
+	homeName := data.HomeName.ValueString()
+	home, err := me.GetHome(ctx, homeName)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", data.HomeName.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", homeName, err))
 		return
 	}
 
 	homeState, err := home.GetState(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get state of home '%s': %v", data.HomeName.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get state of home '%s': %v", homeName, err))
 		return
 	}
 
@@ -201,13 +204,15 @@ func (r GeofencingResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	home, err := me.GetHome(ctx, data.HomeName.Value)
+	homeName := data.HomeName.ValueString()
+	home, err := me.GetHome(ctx, homeName)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", data.HomeName.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get home '%s': %v", homeName, err))
 		return
 	}
 
-	switch data.Presence.Value {
+	presence := data.Presence.ValueString()
+	switch presence {
 	case "auto":
 		err = home.SetPresenceAuto(ctx)
 	case "home":
@@ -215,22 +220,22 @@ func (r GeofencingResource) Update(ctx context.Context, req resource.UpdateReque
 	case "away":
 		err = home.SetPresenceAway(ctx)
 	default:
-		resp.Diagnostics.AddError("Invalid Presence", fmt.Sprintf("Invalid presence value '%s', must be one of 'auto', 'home' or 'away'.", data.Presence.Value))
+		resp.Diagnostics.AddError("Invalid Presence", fmt.Sprintf("Invalid presence value '%s', must be one of 'auto', 'home' or 'away'.", presence))
 		return
 	}
 
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to set presence to '%s': %v", data.Presence.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to set presence to '%s': %v", presence, err))
 		return
 	}
 
 	homeState, err := home.GetState(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get state of home '%s': %v", data.HomeName.Value, err))
+		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to get state of home '%s': %v", homeName, err))
 		return
 	}
 
-	presence := strings.ToLower(string(homeState.Presence))
+	presence = strings.ToLower(string(homeState.Presence))
 	// If presence is not locked, it is set to 'auto'.
 	if !homeState.PresenceLocked {
 		presence = "auto"

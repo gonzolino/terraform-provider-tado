@@ -13,7 +13,7 @@ func TestToTypesStr(t *testing.T) {
 	}{
 		{
 			s:        "test",
-			expected: types.String{Value: "test"},
+			expected: types.StringValue("test"),
 		},
 	}
 
