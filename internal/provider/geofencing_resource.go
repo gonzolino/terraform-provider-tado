@@ -6,10 +6,9 @@ import (
 	"strings"
 
 	"github.com/gonzolino/gotado/v2"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -37,29 +36,25 @@ func (*GeofencingResource) Metadata(_ context.Context, req resource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_geofencing"
 }
 
-func (GeofencingResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		// This description is used by the documentation generator and the language server.
+func (GeofencingResource) Schema(_ context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		MarkdownDescription: "Controls geofencing of a home.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"id": {
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
 				MarkdownDescription: "ID of this geofencing resource. This should match the home_name.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"home_name": {
+			"home_name": schema.StringAttribute{
 				MarkdownDescription: "Name of the home this geofencing resource belongs to.",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"presence": {
+			"presence": schema.StringAttribute{
 				MarkdownDescription: "Whether somebody is present in the home. Can be one of 'auto', 'home' or 'away'.",
-				Type:                types.StringType,
 				Required:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *GeofencingResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {

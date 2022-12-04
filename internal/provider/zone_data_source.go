@@ -6,8 +6,7 @@ import (
 
 	"github.com/gonzolino/gotado/v2"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -38,49 +37,41 @@ func (*ZoneDataSource) Metadata(_ context.Context, req datasource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_zone"
 }
 
-func (ZoneDataSource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		// This description is used by the documentation generator and the language server.
+func (ZoneDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		MarkdownDescription: "A tado zone corresponds to a room in your home. It can contain several tado devices and has its own schedule and configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"id": {
+		Attributes: map[string]schema.Attribute{
+			"id": schema.Int64Attribute{
 				MarkdownDescription: "Zone ID.",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "Name of the zone.",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"home": {
+			"home": schema.StringAttribute{
 				MarkdownDescription: "The name of the home this zone belongs to.",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"type": {
+			"type": schema.StringAttribute{
 				MarkdownDescription: "Zone type. Can be either 'Heating' or 'Hot Water'.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"early_start": {
+			"early_start": schema.BoolAttribute{
 				MarkdownDescription: "If true, tado will ensure the desired temperature is already reached when a schedule block starts.",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"dazzle_mode_enabled": {
+			"dazzle_mode_enabled": schema.BoolAttribute{
 				MarkdownDescription: "If Dazzle Mode is enabled, tado devices in the zone will show an animation when settings are changed via Manual Control.",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"open_window_detection_enabled": {
+			"open_window_detection_enabled": schema.BoolAttribute{
 				MarkdownDescription: "If Open Window Detection is enabled, tado devices in the zone will switch off when an open window is detected.",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *ZoneDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {

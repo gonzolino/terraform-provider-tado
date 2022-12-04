@@ -6,10 +6,9 @@ import (
 
 	"github.com/gonzolino/gotado/v2"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -50,22 +49,20 @@ func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r
 	resp.Version = p.version
 }
 
-func (*TadoProvider) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"username": {
+func (*TadoProvider) Schema(_ context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"username": schema.StringAttribute{
 				MarkdownDescription: "Tado username. Can be set via environment variable `TADO_USERNAME`.",
 				Optional:            true,
-				Type:                types.StringType,
 			},
-			"password": {
+			"password": schema.StringAttribute{
 				MarkdownDescription: "Tado Password. Can be set via environment variable `TADO_PASSWORD`.",
 				Optional:            true,
 				Sensitive:           true,
-				Type:                types.StringType,
 			},
 		},
-	}, nil
+	}
 }
 
 func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {

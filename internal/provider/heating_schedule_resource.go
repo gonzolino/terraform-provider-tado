@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -50,32 +50,29 @@ type HeatingScheduleResourceModel struct {
 	Sun      []TimeBlockModel `tfsdk:"sun"`
 }
 
-var timeBlockAttributes = map[string]tfsdk.Attribute{
-	"heating": {
-		MarkdownDescription: "Whether heating should be turned on or off",
-		Type:                types.BoolType,
-		Required:            true,
-	},
-	"temperature": {
-		MarkdownDescription: "The temperature to set the heating to. Required when 'heating' is true",
-		Type:                types.Float64Type,
-		Optional:            true,
-	},
-	"start": {
-		MarkdownDescription: "When the timeblock starts. Format must be 'hh:mm'.",
-		Type:                types.StringType,
-		Required:            true,
-	},
-	"end": {
-		MarkdownDescription: "When the timeblock ends. Format must be 'hh:mm'.",
-		Type:                types.StringType,
-		Required:            true,
-	},
-	"geofencing_control": {
-		MarkdownDescription: "Whether the settings of this time block are overwritten by the tado away settings. Defaults to 'true'.",
-		Type:                types.BoolType,
-		Optional:            true,
-		Computed:            true,
+var timeBlockAttributes = schema.NestedAttributeObject{
+	Attributes: map[string]schema.Attribute{
+		"heating": schema.BoolAttribute{
+			MarkdownDescription: "Whether heating should be turned on or off",
+			Required:            true,
+		},
+		"temperature": schema.Float64Attribute{
+			MarkdownDescription: "The temperature to set the heating to. Required when 'heating' is true",
+			Optional:            true,
+		},
+		"start": schema.StringAttribute{
+			MarkdownDescription: "When the timeblock starts. Format must be 'hh:mm'.",
+			Required:            true,
+		},
+		"end": schema.StringAttribute{
+			MarkdownDescription: "When the timeblock ends. Format must be 'hh:mm'.",
+			Required:            true,
+		},
+		"geofencing_control": schema.BoolAttribute{
+			MarkdownDescription: "Whether the settings of this time block are overwritten by the tado away settings. Defaults to 'true'.",
+			Optional:            true,
+			Computed:            true,
+		},
 	},
 }
 
@@ -83,74 +80,70 @@ func (*HeatingScheduleResource) Metadata(_ context.Context, req resource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_heating_schedule"
 }
 
-func (HeatingScheduleResource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		// This description is used by the documentation generator and the language server.
+func (HeatingScheduleResource) Schema(_ context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		MarkdownDescription: "The heating schedule of a zone.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"id": {
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
 				MarkdownDescription: "ID of this heating schedule resource.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"home_name": {
+			"home_name": schema.StringAttribute{
 				MarkdownDescription: "Name of the home this heating schedule resource belongs to.",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"zone_name": {
+			"zone_name": schema.StringAttribute{
 				MarkdownDescription: "Name of the zone of this heating schedule.",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"mon_sun": {
+			"mon_sun": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Monday - Sunday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"mon_fri": {
+			"mon_fri": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Monday - Friday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"mon": {
+			"mon": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Monday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"tue": {
+			"tue": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Tuesday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"wed": {
+			"wed": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Wednesday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"thu": {
+			"thu": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Thursday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"fri": {
+			"fri": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Friday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"sat": {
+			"sat": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Saturday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
-			"sun": {
+			"sun": schema.ListNestedAttribute{
 				MarkdownDescription: "Schedule for Sunday.",
 				Optional:            true,
-				Attributes:          tfsdk.ListNestedAttributes(timeBlockAttributes),
+				NestedObject:        timeBlockAttributes,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *HeatingScheduleResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {

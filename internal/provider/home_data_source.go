@@ -6,8 +6,7 @@ import (
 
 	"github.com/gonzolino/gotado/v2"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -45,84 +44,69 @@ func (*HomeDataSource) Metadata(_ context.Context, req datasource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_home"
 }
 
-func (HomeDataSource) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		// This description is used by the documentation generator and the language server.
+func (HomeDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		MarkdownDescription: "A tado home holds all tado devices and heating zones. The home data source provides information such as contact details, address, etc.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"id": {
+		Attributes: map[string]schema.Attribute{
+			"id": schema.Int64Attribute{
 				MarkdownDescription: "Home ID.",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "Name of the home.",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"temperature_unit": {
+			"temperature_unit": schema.StringAttribute{
 				MarkdownDescription: "Temperature unit used in the home. Either 'Celsius' or 'Fahrenheit'.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"contact_name": {
+			"contact_name": schema.StringAttribute{
 				MarkdownDescription: "Name of the contact person.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"contact_email": {
+			"contact_email": schema.StringAttribute{
 				MarkdownDescription: "Email address of the contact person.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"contact_phone": {
+			"contact_phone": schema.StringAttribute{
 				MarkdownDescription: "Phone number of the contact person.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"address_line1": {
+			"address_line1": schema.StringAttribute{
 				MarkdownDescription: "Address line 1.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"address_line2": {
+			"address_line2": schema.StringAttribute{
 				MarkdownDescription: "Address line 2.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"address_zipcode": {
+			"address_zipcode": schema.StringAttribute{
 				MarkdownDescription: "Zip code.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"address_city": {
+			"address_city": schema.StringAttribute{
 				MarkdownDescription: "City.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"address_state": {
+			"address_state": schema.StringAttribute{
 				MarkdownDescription: "State.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"address_country": {
+			"address_country": schema.StringAttribute{
 				MarkdownDescription: "Country.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"geolocation_lat": {
+			"geolocation_lat": schema.Float64Attribute{
 				MarkdownDescription: "Latitude used for Geofencing.",
-				Type:                types.Float64Type,
 				Computed:            true,
 			},
-			"geolocation_long": {
+			"geolocation_long": schema.Float64Attribute{
 				MarkdownDescription: "Longitude used for Geofencing.",
-				Type:                types.Float64Type,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *HomeDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
