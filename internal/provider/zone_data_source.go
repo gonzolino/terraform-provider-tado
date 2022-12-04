@@ -37,7 +37,7 @@ func (*ZoneDataSource) Metadata(_ context.Context, req datasource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_zone"
 }
 
-func (ZoneDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (ZoneDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "A tado zone corresponds to a room in your home. It can contain several tado devices and has its own schedule and configuration.",
 

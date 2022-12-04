@@ -36,7 +36,7 @@ func (*GeofencingResource) Metadata(_ context.Context, req resource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_geofencing"
 }
 
-func (GeofencingResource) Schema(_ context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (GeofencingResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Controls geofencing of a home.",
 

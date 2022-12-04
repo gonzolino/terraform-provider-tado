@@ -44,7 +44,7 @@ func (*HomeDataSource) Metadata(_ context.Context, req datasource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_home"
 }
 
-func (HomeDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (HomeDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "A tado home holds all tado devices and heating zones. The home data source provides information such as contact details, address, etc.",
 

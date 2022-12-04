@@ -49,7 +49,7 @@ func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r
 	resp.Version = p.version
 }
 
-func (*TadoProvider) Schema(_ context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (*TadoProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"username": schema.StringAttribute{

@@ -80,7 +80,7 @@ func (*HeatingScheduleResource) Metadata(_ context.Context, req resource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_heating_schedule"
 }
 
-func (HeatingScheduleResource) Schema(_ context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (HeatingScheduleResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "The heating schedule of a zone.",
 
