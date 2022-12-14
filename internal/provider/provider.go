@@ -20,7 +20,6 @@ const (
 
 // Ensure TadoProvider satisfies various provider interfaces.
 var _ provider.Provider = &TadoProvider{}
-var _ provider.ProviderWithMetadata = &TadoProvider{}
 
 // TadoProvider defines the provider implementation.
 type TadoProvider struct {
