@@ -1,3 +1,4 @@
-provider "scaffolding" {
-  # example configuration here
+provider "tado" {
+  username = "tado-username"
+  password = "supersecret"
 }
