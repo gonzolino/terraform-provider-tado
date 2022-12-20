@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/gonzolino/gotado/v2 v2.0.3
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
-	github.com/hashicorp/terraform-plugin-framework v1.0.0
+	github.com/hashicorp/terraform-plugin-framework v1.0.1
 	github.com/hashicorp/terraform-plugin-go v0.14.2
 )
 
