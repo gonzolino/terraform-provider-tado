@@ -3,18 +3,22 @@
 page_title: "tado Provider"
 subcategory: ""
 description: |-
-  
+  The Tado provider is used to manage your Tado home.
+  While not everything is supported yet, the provider is able to manage heating schedules and settings such as geofencing.
 ---
 
 # tado Provider
 
+The Tado provider is used to manage your Tado home.
 
+While not everything is supported yet, the provider is able to manage heating schedules and settings such as geofencing.
 
 ## Example Usage
 
 ```terraform
-provider "scaffolding" {
-  # example configuration here
+provider "tado" {
+  username = "tado-username"
+  password = "supersecret"
 }
 ```
 

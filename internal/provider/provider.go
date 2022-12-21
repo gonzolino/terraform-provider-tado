@@ -50,6 +50,11 @@ func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r
 
 func (*TadoProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		MarkdownDescription: `
+The Tado provider is used to manage your Tado home.
+
+While not everything is supported yet, the provider is able to manage heating schedules and settings such as geofencing.
+`,
 		Attributes: map[string]schema.Attribute{
 			"username": schema.StringAttribute{
 				MarkdownDescription: "Tado username. Can be set via environment variable `TADO_USERNAME`.",
