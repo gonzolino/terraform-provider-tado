@@ -1,3 +1,17 @@
-## 0.1.0 (Unreleased)
+# Changelog
 
-FEATURES:
+## 1.0.0 (2023-02-11)
+
+
+### Features
+
+* Add geofencing resource ([23f481a](https://github.com/gonzolino/terraform-provider-tado/commit/23f481a708de79963b33bd1288d2615b2926e6dd))
+* Add heating_schedule resource ([a96585b](https://github.com/gonzolino/terraform-provider-tado/commit/a96585b3cdd2d4207a376fea7027c864760e1979))
+* Add home data source ([5275ab4](https://github.com/gonzolino/terraform-provider-tado/commit/5275ab4ff6230d87d0c1cdefc3ff0489ca542680))
+* Add zone data source ([40ab9a9](https://github.com/gonzolino/terraform-provider-tado/commit/40ab9a9312bde02b9d98105e6a8ba8cee7c09bb0))
+
+
+### Bug Fixes
+
+* replace tftypes.AttributePath with path.Path ([7ff91d3](https://github.com/gonzolino/terraform-provider-tado/commit/7ff91d32589f41d97e09cd1d35513d7f357067d1))
+* Update to new DataSource and Resource interfaces ([9ef88ac](https://github.com/gonzolino/terraform-provider-tado/commit/9ef88acf4dd9ed30bd6ad04b20a2be3ebecf5c29))
