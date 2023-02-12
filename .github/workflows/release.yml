@@ -20,6 +20,7 @@ jobs:
     name: Release Please
     outputs:
       release_created: ${{ steps.release-please.outputs.release_created }}
+      pr_number: ${{ steps.release-please.outputs.pr.number }}
     runs-on: ubuntu-latest
     steps:
       - id: release-please
@@ -59,3 +60,19 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           # GitHub sets this automatically
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      - name: Add published label to pull request
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: ${{ needs.release-please.outputs.pr_number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["autorelease: published"]
+            })
+            github.rest.issues.removeLabel({
+              issue_number: ${{ needs.release-please.outputs.pr_number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "autorelease: tagged"
+            })
