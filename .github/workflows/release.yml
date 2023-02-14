@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: release-please
-        uses: google-github-actions/release-please-action@v3.7.3
+        uses: google-github-actions/release-please-action@v3.7.4
         with:
           bump-minor-pre-major: true
           package-name: terraform-provider-tado
