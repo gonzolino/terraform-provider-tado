@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.0...v1.0.1) (2023-02-20)
+
+
+### Bug Fixes
+
+* Update dependencies to fix CVE-2022-27664 ([38a1b72](https://github.com/gonzolino/terraform-provider-tado/commit/38a1b72862d535bc6b532ba5768a036144d6247b))
+
 ## 1.0.0 (2023-02-11)
 
 
