@@ -20,7 +20,7 @@ jobs:
     name: Release Please
     outputs:
       release_created: ${{ steps.release-please.outputs.release_created }}
-      pr_number: ${{ steps.release-please.outputs.pr.number }}
+      pr_number: ${{ steps.release-please.outputs.pr }}
     runs-on: ubuntu-latest
     steps:
       - id: release-please
@@ -65,13 +65,13 @@ jobs:
         with:
           script: |
             github.rest.issues.addLabels({
-              issue_number: ${{ needs.release-please.outputs.pr.number }},
+              issue_number: ${{ needs.release-please.outputs.pr_number }},
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: ["autorelease: published"]
             })
             github.rest.issues.removeLabel({
-              issue_number: ${{ needs.release-please.outputs.pr.number }},
+              issue_number: ${{ needs.release-please.outputs.pr_number }},
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: "autorelease: tagged"
