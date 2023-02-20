@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.2...v1.0.3) (2023-02-20)
+
+
+### Bug Fixes
+
+* Use whole pr object as output from release-please ([2c7508b](https://github.com/gonzolino/terraform-provider-tado/commit/2c7508b0617e430faf2e7701e356d1fe4fa009c5))
+
 ## [1.0.2](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.1...v1.0.2) (2023-02-20)
 
 
