@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.1...v1.0.2) (2023-02-20)
+
+
+### Bug Fixes
+
+* Target PR correctly when assigning autorelease labels ([dba7969](https://github.com/gonzolino/terraform-provider-tado/commit/dba7969cec02009d5c5568f3a6b5074ccfadaa1d))
+
 ## [1.0.1](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.0...v1.0.1) (2023-02-20)
 
 
