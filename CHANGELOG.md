@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.4...v1.0.5) (2023-02-21)
+
+
+### Bug Fixes
+
+* Move PR labelling into extra job ([45a30e6](https://github.com/gonzolino/terraform-provider-tado/commit/45a30e6e8e4ac71d624732065233eb892151b258))
+
 ## [1.0.4](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.3...v1.0.4) (2023-02-21)
 
 
