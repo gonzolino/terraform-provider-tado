@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.3...v1.0.4) (2023-02-21)
+
+
+### Bug Fixes
+
+* Tag release PR using github cli ([415ec41](https://github.com/gonzolino/terraform-provider-tado/commit/415ec41834e2bce744f61e699926380e6ac8a8f9))
+
 ## [1.0.3](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.2...v1.0.3) (2023-02-20)
 
 
