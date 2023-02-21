@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.5...v1.0.6) (2023-02-21)
+
+
+### Bug Fixes
+
+* Checkout repo before labeling PR ([88c87c0](https://github.com/gonzolino/terraform-provider-tado/commit/88c87c0f066ecfc6ac0ed6f901cba8400209da04))
+
 ## [1.0.5](https://github.com/gonzolino/terraform-provider-tado/compare/v1.0.4...v1.0.5) (2023-02-21)
 
 
