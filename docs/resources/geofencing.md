@@ -30,5 +30,3 @@ resource "tado_geofencing" "auto" {
 ### Read-Only
 
 - `id` (String) ID of this geofencing resource. This should match the home_name.
-
-

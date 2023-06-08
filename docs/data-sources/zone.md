@@ -34,5 +34,3 @@ data "tado_zone" "living_room" {
 - `id` (Number) Zone ID.
 - `open_window_detection_enabled` (Boolean) If Open Window Detection is enabled, tado devices in the zone will switch off when an open window is detected.
 - `type` (String) Zone type. Can be either 'Heating' or 'Hot Water'.
-
-

@@ -274,5 +274,3 @@ Optional:
 
 - `geofencing_control` (Boolean) Whether the settings of this time block are overwritten by the tado away settings. Defaults to 'true'.
 - `temperature` (Number) The temperature to set the heating to. Required when 'heating' is true
-
-
