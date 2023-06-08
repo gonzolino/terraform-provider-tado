@@ -40,5 +40,3 @@ data "tado_home" "my_home" {
 - `geolocation_long` (Number) Longitude used for Geofencing.
 - `id` (Number) Home ID.
 - `temperature_unit` (String) Temperature unit used in the home. Either 'Celsius' or 'Fahrenheit'.
-
-
