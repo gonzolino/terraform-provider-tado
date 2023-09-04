@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4
       - name: Unshallow
         run: git fetch --prune --unshallow
       - name: Set up Go
@@ -69,7 +69,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v4
       - name: Get PR number
         id: pr
         run: |
