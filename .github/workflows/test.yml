@@ -82,7 +82,7 @@ jobs:
         cache: true
       id: go
 
-    - uses: hashicorp/setup-terraform@v3.0.0
+    - uses: hashicorp/setup-terraform@v3.1.0
       with:
         terraform_version: ${{ matrix.terraform }}
         terraform_wrapper: false
