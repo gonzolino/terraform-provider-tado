@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/gonzolino/gotado/v2 v2.1.1
 	github.com/hashicorp/terraform-plugin-docs v0.22.0
-	github.com/hashicorp/terraform-plugin-framework v1.15.0
+	github.com/hashicorp/terraform-plugin-framework v1.15.1
 	github.com/hashicorp/terraform-plugin-go v0.28.0
 )
 
