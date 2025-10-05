@@ -3,6 +3,7 @@ module github.com/gonzolino/terraform-provider-tado
 go 1.25
 
 require (
+	github.com/cli/browser v1.3.0
 	github.com/gonzolino/gotado/v2 v2.2.0
 	github.com/hashicorp/terraform-plugin-docs v0.22.0
 	github.com/hashicorp/terraform-plugin-framework v1.15.1
