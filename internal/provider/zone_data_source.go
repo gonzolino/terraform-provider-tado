@@ -18,9 +18,7 @@ func NewZoneDataSource() datasource.DataSource {
 }
 
 type ZoneDataSource struct {
-	client   *gotado.Tado
-	username string
-	password string
+	client *gotado.Tado
 }
 
 type ZoneDataSourceModel struct {
@@ -92,8 +90,6 @@ func (d *ZoneDataSource) Configure(_ context.Context, req datasource.ConfigureRe
 	}
 
 	d.client = data.client
-	d.username = data.username
-	d.password = data.password
 }
 
 func (d ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -106,7 +102,7 @@ func (d ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	me, err := d.client.Me(ctx, d.username, d.password)
+	me, err := d.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return

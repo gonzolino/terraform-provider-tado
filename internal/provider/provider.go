@@ -2,20 +2,18 @@ package provider
 
 import (
 	"context"
-	"os"
+	"fmt"
 
+	"github.com/cli/browser"
 	"github.com/gonzolino/gotado/v2"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 const (
-	// Use tado client ID and secret from https://app.tado.com/env.js
-	tadoClientID     = "tado-web-app"
-	tadoClientSecret = "wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc"
+	tadoClientID = "1bb50063-6b0c-4d11-bd99-387f4a91cc46"
 )
 
 // Ensure TadoProvider satisfies various provider interfaces.
@@ -31,16 +29,12 @@ type TadoProvider struct {
 
 // TadoProviderModel describes the provider data model.
 type TadoProviderModel struct {
-	Username types.String `tfsdk:"username"`
-	Password types.String `tfsdk:"password"`
 }
 
 // tadoProviderData contains data needed to configure tado resources and data
 // sources.
 type tadoProviderData struct {
-	client   *gotado.Tado
-	username string
-	password string
+	client *gotado.Tado
 }
 
 func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -55,17 +49,6 @@ The Tado provider is used to manage your Tado home.
 
 While not everything is supported yet, the provider is able to manage heating schedules and settings such as geofencing.
 `,
-		Attributes: map[string]schema.Attribute{
-			"username": schema.StringAttribute{
-				MarkdownDescription: "Tado username. Can be set via environment variable `TADO_USERNAME`.",
-				Optional:            true,
-			},
-			"password": schema.StringAttribute{
-				MarkdownDescription: "Tado Password. Can be set via environment variable `TADO_PASSWORD`.",
-				Optional:            true,
-				Sensitive:           true,
-			},
-		},
 	}
 }
 
@@ -78,36 +61,35 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 		return
 	}
 
-	var username string
-	if data.Username.IsUnknown() {
-		resp.Diagnostics.AddWarning("Tado username is not set", "Tado username is not set. This is required for authentication.")
-	}
-	if data.Username.IsNull() {
-		username = os.Getenv("TADO_USERNAME")
-	} else {
-		username = data.Username.ValueString()
-	}
-	if username == "" {
-		resp.Diagnostics.AddError("Tado username is not set", "Tado username is not set. This is required for authentication.")
+	config := gotado.AuthConfig(tadoClientID)
+
+	deviceAuth, err := config.DeviceAuth(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unable to start authentication",
+			fmt.Sprintf("Failed to initiate device authentication: %v", err),
+		)
+		return
 	}
 
-	var password string
-	if data.Password.IsUnknown() {
-		resp.Diagnostics.AddWarning("Tado password is not set", "Tado password is not set. This is required for authentication.")
+	if err := browser.OpenURL(deviceAuth.VerificationURIComplete); err != nil {
+		resp.Diagnostics.AddWarning(
+			"Unable to open browser",
+			fmt.Sprintf("Please visit %s to authenticate: %v", deviceAuth.VerificationURIComplete, err),
+		)
 	}
-	if data.Password.IsNull() {
-		password = os.Getenv("TADO_PASSWORD")
-	} else {
-		password = data.Password.ValueString()
-	}
-	if password == "" {
-		resp.Diagnostics.AddError("Tado password is not set", "Tado password is not set. This is required for authentication.")
+
+	token, err := config.DeviceAccessToken(ctx, deviceAuth)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Authentication failed",
+			fmt.Sprintf("Failed to authenticate with Tado: %v", err),
+		)
+		return
 	}
 
 	providerData := &tadoProviderData{
-		client:   gotado.New(tadoClientID, tadoClientSecret),
-		username: username,
-		password: password,
+		client: gotado.New(ctx, config, token),
 	}
 
 	resp.DataSourceData = providerData

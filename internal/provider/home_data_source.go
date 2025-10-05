@@ -18,9 +18,7 @@ func NewHomeDataSource() datasource.DataSource {
 }
 
 type HomeDataSource struct {
-	client   *gotado.Tado
-	username string
-	password string
+	client *gotado.Tado
 }
 
 type HomeDataSourceModel struct {
@@ -127,8 +125,6 @@ func (d *HomeDataSource) Configure(_ context.Context, req datasource.ConfigureRe
 	}
 
 	d.client = data.client
-	d.username = data.username
-	d.password = data.password
 }
 
 func (d HomeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -141,7 +137,7 @@ func (d HomeDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	me, err := d.client.Me(ctx, d.username, d.password)
+	me, err := d.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado Authentication Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
