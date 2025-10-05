@@ -22,9 +22,7 @@ func NewHeatingScheduleResource() resource.Resource {
 }
 
 type HeatingScheduleResource struct {
-	client   *gotado.Tado
-	username string
-	password string
+	client *gotado.Tado
 }
 
 type TimeBlockModel struct {
@@ -164,8 +162,6 @@ func (r *HeatingScheduleResource) Configure(_ context.Context, req resource.Conf
 	}
 
 	r.client = data.client
-	r.username = data.username
-	r.password = data.password
 }
 
 func (r HeatingScheduleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -178,7 +174,7 @@ func (r HeatingScheduleResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	me, err := r.client.Me(ctx, r.username, r.password)
+	me, err := r.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -231,7 +227,7 @@ func (r HeatingScheduleResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	me, err := r.client.Me(ctx, r.username, r.password)
+	me, err := r.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -273,7 +269,7 @@ func (r HeatingScheduleResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	me, err := r.client.Me(ctx, r.username, r.password)
+	me, err := r.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return

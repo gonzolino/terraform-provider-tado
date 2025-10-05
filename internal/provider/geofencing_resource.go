@@ -21,9 +21,7 @@ func NewGeofencingResource() resource.Resource {
 }
 
 type GeofencingResource struct {
-	client   *gotado.Tado
-	username string
-	password string
+	client *gotado.Tado
 }
 
 type GeofencingResourceModel struct {
@@ -75,8 +73,6 @@ func (r *GeofencingResource) Configure(_ context.Context, req resource.Configure
 	}
 
 	r.client = data.client
-	r.username = data.username
-	r.password = data.password
 }
 
 func (r GeofencingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -89,7 +85,7 @@ func (r GeofencingResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	me, err := r.client.Me(ctx, r.username, r.password)
+	me, err := r.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -150,7 +146,7 @@ func (r GeofencingResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	me, err := r.client.Me(ctx, r.username, r.password)
+	me, err := r.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
@@ -193,7 +189,7 @@ func (r GeofencingResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	me, err := r.client.Me(ctx, r.username, r.password)
+	me, err := r.client.Me(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Tado API Error", fmt.Sprintf("Unable to authenticate with Tado: %v", err))
 		return
