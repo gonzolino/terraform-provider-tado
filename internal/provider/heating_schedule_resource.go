@@ -144,7 +144,7 @@ func (HeatingScheduleResource) Schema(_ context.Context, _ resource.SchemaReques
 	}
 }
 
-func (r *HeatingScheduleResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *HeatingScheduleResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -161,7 +161,7 @@ func (r *HeatingScheduleResource) Configure(_ context.Context, req resource.Conf
 		return
 	}
 
-	r.client = data.client
+	r.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.tokenPath, &resp.Diagnostics))
 }
 
 func (r HeatingScheduleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
