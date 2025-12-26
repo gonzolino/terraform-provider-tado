@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/cli/browser"
 	"github.com/gonzolino/gotado/v2"
@@ -10,6 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"golang.org/x/oauth2"
 )
 
 const (
@@ -29,12 +33,15 @@ type TadoProvider struct {
 
 // TadoProviderModel describes the provider data model.
 type TadoProviderModel struct {
+	TokenPath types.String `tfsdk:"token_path"`
 }
 
 // tadoProviderData contains data needed to configure tado resources and data
 // sources.
 type tadoProviderData struct {
-	client *gotado.Tado
+	config     *oauth2.Config
+	token      *oauth2.Token
+	token_path string
 }
 
 func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -49,6 +56,12 @@ The Tado provider is used to manage your Tado home.
 
 While not everything is supported yet, the provider is able to manage heating schedules and settings such as geofencing.
 `,
+		Attributes: map[string]schema.Attribute{
+			"token_path": schema.StringAttribute{
+				MarkdownDescription: "The path where to store the Tado token.",
+				Optional:            true,
+			},
+		},
 	}
 }
 
@@ -61,35 +74,66 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 		return
 	}
 
-	config := gotado.AuthConfig(tadoClientID)
+	var token_path string
+	if data.TokenPath.IsNull() {
+		token_path = os.Getenv("TADO_TOKEN_PATH")
+	} else {
+		token_path = data.TokenPath.ValueString()
+	}
+	if token_path == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Unable to determine home directory",
+				fmt.Sprintf("Failed to get user home directory: %v", err),
+			)
+			return
+		}
+		token_path = filepath.Join(home, ".tado_token.json")
+	}
 
-	deviceAuth, err := config.DeviceAuth(ctx)
+	token, err := readToken(token_path)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unable to start authentication",
-			fmt.Sprintf("Failed to initiate device authentication: %v", err),
+			"Unable to read token",
+			fmt.Sprintf("An error occurred while reading the tado token from %s: %v", token_path, err),
 		)
 		return
 	}
 
-	if err := browser.OpenURL(deviceAuth.VerificationURIComplete); err != nil {
-		resp.Diagnostics.AddWarning(
-			"Unable to open browser",
-			fmt.Sprintf("Please visit %s to authenticate: %v", deviceAuth.VerificationURIComplete, err),
-		)
-	}
+	config := gotado.AuthConfig(tadoClientID, "offline_access")
 
-	token, err := config.DeviceAccessToken(ctx, deviceAuth)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Authentication failed",
-			fmt.Sprintf("Failed to authenticate with Tado: %v", err),
-		)
-		return
+	if token == nil {
+		deviceAuth, err := config.DeviceAuth(ctx)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Unable to start authentication",
+				fmt.Sprintf("Failed to initiate device authentication: %v", err),
+			)
+			return
+		}
+
+		if err := browser.OpenURL(deviceAuth.VerificationURIComplete); err != nil {
+			resp.Diagnostics.AddWarning(
+				"Unable to open browser",
+				fmt.Sprintf("Please visit %s to authenticate: %v", deviceAuth.VerificationURIComplete, err),
+			)
+		}
+
+		token, err = config.DeviceAccessToken(ctx, deviceAuth)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Authentication failed",
+				fmt.Sprintf("Failed to authenticate with Tado: %v", err),
+			)
+			return
+		}
 	}
 
 	providerData := &tadoProviderData{
-		client: gotado.New(ctx, config, token),
+		config:     config,
+		token:      token,
+		token_path: token_path,
 	}
 
 	resp.DataSourceData = providerData

@@ -55,7 +55,7 @@ func (GeofencingResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 	}
 }
 
-func (r *GeofencingResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *GeofencingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -72,7 +72,7 @@ func (r *GeofencingResource) Configure(_ context.Context, req resource.Configure
 		return
 	}
 
-	r.client = data.client
+	r.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.token_path, &resp.Diagnostics))
 }
 
 func (r GeofencingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {

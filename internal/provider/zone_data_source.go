@@ -72,7 +72,7 @@ func (ZoneDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp
 	}
 }
 
-func (d *ZoneDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ZoneDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -89,7 +89,7 @@ func (d *ZoneDataSource) Configure(_ context.Context, req datasource.ConfigureRe
 		return
 	}
 
-	d.client = data.client
+	d.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.token_path, &resp.Diagnostics))
 }
 
 func (d ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
