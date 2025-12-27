@@ -30,6 +30,9 @@ func boolToPower(b bool) gotado.Power {
 	return gotado.PowerOff
 }
 
+// updateToken writes an OAuth2 token to a file in JSON format.
+// The file is created with 0600 permissions (read/write for owner only).
+// If the file already exists, it will be truncated before writing.
 func updateToken(token *oauth2.Token, path string) error {
 	tokenBytes, err := json.MarshalIndent(token, "", "  ")
 	if err != nil {
@@ -46,6 +49,9 @@ func updateToken(token *oauth2.Token, path string) error {
 	return err
 }
 
+// readToken reads an OAuth2 token from a JSON file.
+// If the file does not exist, it returns (nil, nil) without an error.
+// If the file exists but cannot be read or parsed, it returns an error.
 func readToken(path string) (*oauth2.Token, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -63,6 +69,10 @@ func readToken(path string) (*oauth2.Token, error) {
 	return &token, nil
 }
 
+// createTokenUpdateCallback creates a callback function that updates a token file.
+// The returned callback writes the token to the specified path and adds a warning
+// to the diagnostics if the update fails. This is typically used to persist token
+// refreshes automatically.
 func createTokenUpdateCallback(tokenPath string, diagnostics *diag.Diagnostics) func(token *oauth2.Token) {
 	return func(token *oauth2.Token) {
 		if err := updateToken(token, tokenPath); err != nil {
