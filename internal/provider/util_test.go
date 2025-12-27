@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -203,7 +204,7 @@ func TestReadToken(t *testing.T) {
 
 	t.Run("fails with permission denied", func(t *testing.T) {
 		// This test only works on Unix-like systems
-		if os.Getenv("GOOS") == "windows" {
+		if runtime.GOOS == "windows" {
 			t.Skip("Skipping permission test on Windows")
 		}
 
