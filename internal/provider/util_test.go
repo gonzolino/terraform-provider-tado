@@ -68,6 +68,7 @@ func TestUpdateToken(t *testing.T) {
 		}
 
 		// Check file permissions (0600 on Unix-like systems)
+		// 0177 is a mask to check group/other permissions are not set (only owner read/write allowed)
 		if fileInfo.Mode().Perm()&0177 != 0 {
 			t.Errorf("File permissions too permissive: %v", fileInfo.Mode().Perm())
 		}
@@ -149,8 +150,11 @@ func TestReadToken(t *testing.T) {
 		}
 
 		// Write token to file
-		tokenBytes, _ := json.MarshalIndent(expectedToken, "", "  ")
-		err := os.WriteFile(tokenPath, tokenBytes, 0600)
+		tokenBytes, err := json.MarshalIndent(expectedToken, "", "  ")
+		if err != nil {
+			t.Fatalf("Failed to marshal test token: %v", err)
+		}
+		err = os.WriteFile(tokenPath, tokenBytes, 0600)
 		if err != nil {
 			t.Fatalf("Failed to write test token file: %v", err)
 		}
@@ -210,6 +214,7 @@ func TestReadToken(t *testing.T) {
 
 		tokenPath := filepath.Join(tmpDir, "noperm_token.json")
 		tokenBytes := []byte(`{"access_token": "test"}`)
+		// Set permissions to 0000 (no permissions) to test permission denied scenario
 		err := os.WriteFile(tokenPath, tokenBytes, 0000)
 		if err != nil {
 			t.Fatalf("Failed to write no-permission file: %v", err)
