@@ -58,7 +58,7 @@ While not everything is supported yet, the provider is able to manage heating sc
 `,
 		Attributes: map[string]schema.Attribute{
 			"token_path": schema.StringAttribute{
-				MarkdownDescription: "The path where to store the Tado token.",
+				MarkdownDescription: "The path where to store the Tado token. This can also be configured via the `TADO_TOKEN_PATH` environment variable. If neither this attribute nor the environment variable is set, the default location `~/.tado_token.json` is used.",
 				Optional:            true,
 			},
 		},
