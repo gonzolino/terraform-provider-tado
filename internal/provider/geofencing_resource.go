@@ -72,7 +72,7 @@ func (r *GeofencingResource) Configure(ctx context.Context, req resource.Configu
 		return
 	}
 
-	r.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.token_path, &resp.Diagnostics))
+	r.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.tokenPath, &resp.Diagnostics))
 }
 
 func (r GeofencingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {

@@ -89,7 +89,7 @@ func (d *ZoneDataSource) Configure(ctx context.Context, req datasource.Configure
 		return
 	}
 
-	d.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.token_path, &resp.Diagnostics))
+	d.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.tokenPath, &resp.Diagnostics))
 }
 
 func (d ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

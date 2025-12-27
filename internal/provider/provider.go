@@ -39,9 +39,9 @@ type TadoProviderModel struct {
 // tadoProviderData contains data needed to configure tado resources and data
 // sources.
 type tadoProviderData struct {
-	config     *oauth2.Config
-	token      *oauth2.Token
-	token_path string
+	config    *oauth2.Config
+	token     *oauth2.Token
+	tokenPath string
 }
 
 func (p *TadoProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -74,13 +74,13 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 		return
 	}
 
-	var token_path string
+	var tokenPath string
 	if data.TokenPath.IsNull() {
-		token_path = os.Getenv("TADO_TOKEN_PATH")
+		tokenPath = os.Getenv("TADO_TOKEN_PATH")
 	} else {
-		token_path = data.TokenPath.ValueString()
+		tokenPath = data.TokenPath.ValueString()
 	}
-	if token_path == "" {
+	if tokenPath == "" {
 		home, err := os.UserHomeDir()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -89,14 +89,14 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 			)
 			return
 		}
-		token_path = filepath.Join(home, ".tado_token.json")
+		tokenPath = filepath.Join(home, ".tado_token.json")
 	}
 
-	token, err := readToken(token_path)
+	token, err := readToken(tokenPath)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to read token",
-			fmt.Sprintf("An error occurred while reading the tado token from %s: %v", token_path, err),
+			fmt.Sprintf("An error occurred while reading the tado token from %s: %v", tokenPath, err),
 		)
 		return
 	}
@@ -131,9 +131,9 @@ func (*TadoProvider) Configure(ctx context.Context, req provider.ConfigureReques
 	}
 
 	providerData := &tadoProviderData{
-		config:     config,
-		token:      token,
-		token_path: token_path,
+		config:    config,
+		token:     token,
+		tokenPath: tokenPath,
 	}
 
 	resp.DataSourceData = providerData

@@ -161,7 +161,7 @@ func (r *HeatingScheduleResource) Configure(ctx context.Context, req resource.Co
 		return
 	}
 
-	r.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.token_path, &resp.Diagnostics))
+	r.client = gotado.NewWithTokenRefreshCallback(ctx, data.config, data.token, createTokenUpdateCallback(data.tokenPath, &resp.Diagnostics))
 }
 
 func (r HeatingScheduleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {

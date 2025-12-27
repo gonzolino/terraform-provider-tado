@@ -73,12 +73,12 @@ func readToken(path string) (*oauth2.Token, error) {
 // The returned callback writes the token to the specified path and adds a warning
 // to the diagnostics if the update fails. This is typically used to persist token
 // refreshes automatically.
-func createTokenUpdateCallback(token_path string, diagnostics *diag.Diagnostics) func(token *oauth2.Token) {
+func createTokenUpdateCallback(tokenPath string, diagnostics *diag.Diagnostics) func(token *oauth2.Token) {
 	return func(token *oauth2.Token) {
-		if err := updateToken(token, token_path); err != nil {
+		if err := updateToken(token, tokenPath); err != nil {
 			diagnostics.AddWarning(
 				"Unable to update token",
-				fmt.Sprintf("Failed to update token at %s: %v", token_path, err),
+				fmt.Sprintf("Failed to update token at %s: %v", tokenPath, err),
 			)
 		}
 	}
