@@ -53,7 +53,7 @@ func TestUpdateToken(t *testing.T) {
 			AccessToken:  "test-access-token",
 			TokenType:    "Bearer",
 			RefreshToken: "test-refresh-token",
-			Expiry:       time.Now().Add(24 * time.Hour),
+			Expiry:       time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC),
 		}
 
 		err := updateToken(testToken, tokenPath)
@@ -146,7 +146,7 @@ func TestReadToken(t *testing.T) {
 			AccessToken:  "test-access-token",
 			TokenType:    "Bearer",
 			RefreshToken: "test-refresh-token",
-			Expiry:       time.Now().Add(24 * time.Hour),
+			Expiry:       time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC),
 		}
 
 		// Write token to file
