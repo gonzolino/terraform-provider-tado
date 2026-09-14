@@ -1,6 +1,6 @@
 module github.com/gonzolino/terraform-provider-tado
 
-go 1.25.8
+go 1.26.0
 
 require (
 	github.com/cli/browser v1.3.0
@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.25.0
 	github.com/hashicorp/terraform-plugin-framework v1.19.0
 	github.com/hashicorp/terraform-plugin-go v0.31.0
-	golang.org/x/oauth2 v0.36.0
+	golang.org/x/oauth2 v0.37.0
 )
 
 require (
